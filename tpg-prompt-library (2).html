@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TPG AI Prompt Library</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0D1B2A;
+    --navy-mid: #152336;
+    --navy-light: #1E3050;
+    --amber: #E8961A;
+    --amber-light: #FAC75A;
+    --amber-pale: #FFF4DC;
+    --slate: #8FA3B8;
+    --slate-light: #C4D3E0;
+    --white: #FFFFFF;
+    --off-white: #F4F7FA;
+    --border: rgba(143,163,184,0.18);
+    --border-strong: rgba(143,163,184,0.35);
+    --text-body: #1E2D3D;
+    --text-muted: #5A7490;
+    --radius: 10px;
+    --radius-lg: 14px;
+    --tag-bg: #EEF4FA;
+    --tag-text: #2A5278;
+  }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--off-white);
+    color: var(--text-body);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .lib-header {
+    background: var(--navy);
+    padding: 36px 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .lib-header::before {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 340px; height: 340px;
+    border-radius: 50%;
+    background: rgba(232,150,26,0.08);
+    pointer-events: none;
+  }
+  .lib-header::after {
+    content: '';
+    position: absolute;
+    right: 80px; bottom: -100px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(232,150,26,0.05);
+    pointer-events: none;
+  }
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(232,150,26,0.15);
+    border: 1px solid rgba(232,150,26,0.3);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--amber-light);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .header-badge span.dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    display: inline-block;
+  }
+  .lib-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: -0.3px;
+    margin-bottom: 6px;
+  }
+  .lib-header p {
+    font-size: 14px;
+    color: var(--slate);
+    max-width: 520px;
+  }
+  .header-meta {
+    margin-top: 20px;
+    display: flex;
+    gap: 24px;
+  }
+  .header-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .header-meta-item .val {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--amber-light);
+  }
+  .header-meta-item .lbl {
+    font-size: 11px;
+    color: var(--slate);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── FILTERS ── */
+  .filter-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .filter-search {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+  }
+  .filter-search input {
+    width: 100%;
+    height: 38px;
+    background: var(--off-white);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 0 12px 0 36px;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    color: var(--text-body);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .filter-search input:focus { border-color: var(--amber); }
+  .filter-search svg {
+    position: absolute;
+    left: 11px; top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .filter-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+  }
+  select.filter-select {
+    height: 38px;
+    background: var(--off-white);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 0 28px 0 12px;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    color: var(--text-body);
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235A7490' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    transition: border-color 0.15s;
+  }
+  select.filter-select:focus { border-color: var(--amber); }
+  .filter-reset {
+    height: 38px;
+    padding: 0 16px;
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .filter-reset:hover { border-color: var(--amber); color: var(--amber); }
+
+  /* ── RESULTS COUNT ── */
+  .results-bar {
+    padding: 16px 40px 0;
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .results-bar strong { color: var(--text-body); font-weight: 600; }
+
+  /* ── GRID ── */
+  .prompt-grid {
+    padding: 16px 40px 48px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+
+  /* ── CARD ── */
+  .prompt-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  .prompt-card:hover { border-color: var(--border-strong); box-shadow: 0 4px 20px rgba(13,27,42,0.08); }
+  .prompt-card.open { border-color: var(--amber); }
+
+  .card-header {
+    padding: 18px 20px 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    user-select: none;
+  }
+  .card-header-left { flex: 1; min-width: 0; }
+
+  .card-platform-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--amber-pale);
+    border: 1px solid rgba(232,150,26,0.25);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #7A4A00;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-body);
+    margin-bottom: 5px;
+    line-height: 1.35;
+  }
+  .card-desc {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .card-chevron {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: background 0.15s, border-color 0.15s, transform 0.25s;
+  }
+  .prompt-card.open .card-chevron {
+    background: var(--amber);
+    border-color: var(--amber);
+    transform: rotate(180deg);
+  }
+  .prompt-card.open .card-chevron svg path { stroke: #fff; }
+
+  .card-tags {
+    padding: 0 20px 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    border: 1px solid rgba(42,82,120,0.12);
+  }
+  .tag.fn  { background: #EDFAF4; color: #1A5C3A; border-color: rgba(26,92,58,0.15); }
+  .tag.aud { background: #F0EFFE; color: #3D2B87; border-color: rgba(61,43,135,0.15); }
+
+  /* ── EXPANDED BODY ── */
+  .card-body {
+    display: none;
+    padding: 0 20px 20px;
+  }
+  .prompt-card.open .card-body { display: block; }
+
+  .section-block {
+    margin-top: 16px;
+  }
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--amber);
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-content {
+    font-size: 12.5px;
+    color: var(--text-body);
+    line-height: 1.7;
+  }
+  .section-content ul {
+    padding-left: 16px;
+  }
+  .section-content ul li {
+    margin-bottom: 3px;
+  }
+
+  .prompt-box {
+    background: var(--navy);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-top: 8px;
+    position: relative;
+  }
+  .prompt-box pre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: #C8DCF0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.7;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #C8DCF0;
+    cursor: pointer;
+    font-family: 'Sora', sans-serif;
+    transition: background 0.15s;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.18); }
+  .copy-btn.copied { color: #6FE5A5; border-color: rgba(111,229,165,0.35); }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .meta-item {
+    background: var(--off-white);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .meta-item .mi-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 3px;
+  }
+  .meta-item .mi-val {
+    font-size: 12.5px;
+    color: var(--text-body);
+    font-weight: 500;
+  }
+
+  .guardrail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 6px;
+  }
+  .guardrail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    font-size: 12.5px;
+    color: var(--text-body);
+  }
+  .guardrail-item::before {
+    content: '✕';
+    font-size: 9px;
+    font-weight: 700;
+    color: #C0392B;
+    background: #FCEBEB;
+    border-radius: 4px;
+    padding: 2px 5px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+  }
+  .no-results svg { margin-bottom: 12px; opacity: 0.4; }
+  .no-results p { font-size: 14px; }
+
+  /* ── TEMPLATE REFERENCE PANEL ── */
+  .template-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    height: 38px;
+    padding: 0 18px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    font-family: 'Sora', sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #E0EAF4;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .template-btn:hover { background: rgba(255,255,255,0.14); border-color: var(--amber); color: var(--amber-light); }
+  .template-btn svg { flex-shrink: 0; transition: transform 0.25s; }
+  .template-btn.open svg { transform: rotate(180deg); }
+
+  .template-panel {
+    display: none;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+  }
+  .template-panel.open { display: block; }
+
+  .template-inner {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 32px 40px 40px;
+  }
+
+  .template-panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .template-panel-header-left h2 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-body);
+    margin-bottom: 4px;
+  }
+  .template-panel-header-left p {
+    font-size: 13px;
+    color: var(--text-muted);
+    max-width: 560px;
+    line-height: 1.6;
+  }
+  .template-copy-all {
+    flex-shrink: 0;
+    height: 36px;
+    padding: 0 16px;
+    background: var(--navy);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .template-copy-all:hover { background: var(--navy-light); }
+  .template-copy-all.copied { background: #1A5C3A; }
+
+  .template-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .template-section {
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .template-section.full-width { grid-column: 1 / -1; }
+  .ts-head {
+    padding: 13px 16px 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .ts-num {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    background: var(--navy);
+    color: var(--amber-light);
+    font-size: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .ts-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-body);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .ts-body {
+    padding: 14px 16px;
+    font-size: 12.5px;
+    color: var(--text-body);
+    line-height: 1.75;
+  }
+  .ts-body ul { padding-left: 16px; }
+  .ts-body ul li { margin-bottom: 3px; }
+  .ts-body .field {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--amber-pale);
+    border: 1px solid rgba(232,150,26,0.2);
+    border-radius: 5px;
+    padding: 1px 8px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #7A4A00;
+    font-family: 'IBM Plex Mono', monospace;
+    margin: 1px 2px;
+  }
+  .ts-divider {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin: 10px 0 6px;
+  }
+  .ts-body p { margin-bottom: 6px; }
+  .ts-body p:last-child { margin-bottom: 0; }
+  .ref-badge {
+    display: inline-block;
+    background: #EDFAF4;
+    color: #1A5C3A;
+    border: 1px solid rgba(26,92,58,0.2);
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 700px) {
+    .lib-header { padding: 24px 20px 20px; }
+    .filter-bar { padding: 12px 20px; }
+    .prompt-grid { padding: 12px 20px 40px; }
+    .results-bar { padding: 12px 20px 0; }
+    .prompt-grid { grid-template-columns: 1fr; }
+    .template-inner { padding: 20px; }
+    .template-sections { grid-template-columns: 1fr; }
+    .template-section.full-width { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="lib-header">
+  <div class="header-badge"><span class="dot"></span> TPG Internal Resource</div>
+  <h1>AI Prompt Library</h1>
+  <p>Curated, field-tested prompts built for client engagements. Filter by platform, function, or audience to find the right prompt fast.</p>
+  <div class="header-meta">
+    <div class="header-meta-item">
+      <span class="val" id="total-count">1</span>
+      <span class="lbl">Prompts</span>
+    </div>
+    <div class="header-meta-item">
+      <span class="val">4</span>
+      <span class="lbl">Platforms</span>
+    </div>
+    <div class="header-meta-item">
+      <span class="val">5</span>
+      <span class="lbl">Functions</span>
+    </div>
+  </div>
+  <button class="template-btn" id="template-toggle-btn" onclick="toggleTemplate()">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M4 4.5h6M4 7h6M4 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    View Prompt Template
+    <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+<!-- TEMPLATE REFERENCE PANEL -->
+<div class="template-panel" id="template-panel">
+  <div class="template-inner">
+    <div class="template-panel-header">
+      <div class="template-panel-header-left">
+        <div class="ref-badge">Reference Material</div>
+        <h2>Standard Prompt Template Format</h2>
+        <p>Use this structure when contributing new prompts to the library. Each section is non-negotiable — complete all fields before submitting for inclusion.</p>
+      </div>
+      <button class="template-copy-all" id="copy-template-btn" onclick="copyFullTemplate()">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="4" y="4" width="8" height="8" rx="1.5" stroke="white" stroke-width="1.3"/><path d="M1 9V2a1 1 0 011-1h7" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Copy Full Template
+      </button>
+    </div>
+
+    <div class="template-sections">
+
+      <div class="template-section">
+        <div class="ts-head">
+          <div class="ts-num">—</div>
+          <div class="ts-title">Prompt Name</div>
+        </div>
+        <div class="ts-body">
+          <p>Short, specific, action-oriented title.</p>
+          <p>Example: <strong>HubSpot Workflow Spec Generator</strong></p>
+        </div>
+      </div>
+
+      <div class="template-section">
+        <div class="ts-head">
+          <div class="ts-num">1</div>
+          <div class="ts-title">Role &amp; Point of View</div>
+        </div>
+        <div class="ts-body">
+          <p>You are acting as a senior client engagement lead at a B2B professional services firm, with deep experience in revenue marketing, marketing operations, and executive-level client interactions.</p>
+          <p>You understand complex stakeholder dynamics and how to prepare efficiently for high-impact client meetings.</p>
+        </div>
+      </div>
+
+      <div class="template-section">
+        <div class="ts-head">
+          <div class="ts-num">2</div>
+          <div class="ts-title">Objective (Job to Be Done)</div>
+        </div>
+        <div class="ts-body">
+          <p>Your objective is to prepare concise, actionable meeting prep points so that the team can run an efficient, informed client meeting and drive clear next steps.</p>
+        </div>
+      </div>
+
+      <div class="template-section full-width">
+        <div class="ts-head">
+          <div class="ts-num">3</div>
+          <div class="ts-title">Context &amp; Inputs</div>
+        </div>
+        <div class="ts-body">
+          <div class="ts-divider">Context Fields</div>
+          <p>
+            Client: <span class="field">[Client Name]</span>
+            Industry: <span class="field">[Industry]</span>
+            Meeting Type: <span class="field">[Status / Planning / QBR / Discovery / Escalation]</span>
+            Audience: <span class="field">[CMO, VP Marketing, Marketing Ops, Cross-functional]</span>
+            Platform: <span class="field">[Marketo, HubSpot, SFDC]</span>
+            Function: <span class="field">[Campaign Ops, Workflow]</span>
+            Date of Upcoming Meeting: <span class="field">[Date]</span>
+          </p>
+          <div class="ts-divider">Inputs</div>
+          <ul>
+            <li>Previous meeting notes (included below)</li>
+            <li>Email and chat communications since the last meeting (included below)</li>
+            <li>Project plan and SOW (if relevant)</li>
+            <li>Campaign goal</li>
+            <li>Audience segment rules</li>
+            <li>Conversion action</li>
+            <li>Suppression requirements</li>
+          </ul>
+          <p style="margin-top:8px; color: #7A4A00; background: var(--amber-pale); border-radius: 6px; padding: 8px 10px; font-size: 12px; border: 1px solid rgba(232,150,26,0.2);">If information is missing or unclear, flag it explicitly rather than making assumptions.</p>
+        </div>
+      </div>
+
+      <div class="template-section full-width">
+        <div class="ts-head">
+          <div class="ts-num">4</div>
+          <div class="ts-title">Output Requirements (Non-Negotiable)</div>
+        </div>
+        <div class="ts-body">
+          <div class="ts-divider">The output must be</div>
+          <ul>
+            <li>Clear, concise, and client-ready</li>
+            <li>Written in TPG voice (confident, pragmatic, outcome-oriented)</li>
+            <li>Structured for quick consumption before the meeting</li>
+          </ul>
+          <div class="ts-divider">Format — provide output in these sections</div>
+          <ul>
+            <li>Meeting Objective (1–2 bullets)</li>
+            <li>Key Updates Since Last Meeting</li>
+            <li>Open Items / Risks / Blockers</li>
+            <li>Decisions Needed in This Meeting</li>
+            <li>Recommended Talking Points</li>
+            <li>Proposed Next Steps (with owners if possible)</li>
+          </ul>
+          <div class="ts-divider">Length</div>
+          <p>No more than 1 page or 10–12 total bullets.</p>
+        </div>
+      </div>
+
+      <div class="template-section">
+        <div class="ts-head">
+          <div class="ts-num">5</div>
+          <div class="ts-title">Inclusions &amp; Exclusions</div>
+        </div>
+        <div class="ts-body">
+          <div class="ts-divider">Always include</div>
+          <ul>
+            <li>What changed since the last meeting</li>
+            <li>Where the client may push back or ask questions</li>
+            <li>Clear decision points</li>
+          </ul>
+          <div class="ts-divider">Never include</div>
+          <ul>
+            <li>Generic meeting advice</li>
+            <li>AI disclaimers</li>
+            <li>Repetition of raw notes</li>
+            <li>Assumptions not grounded in provided inputs</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="template-section">
+        <div class="ts-head">
+          <div class="ts-num">6</div>
+          <div class="ts-title">Quality Control</div>
+        </div>
+        <div class="ts-body">
+          <div class="ts-divider">Before finalizing</div>
+          <ul>
+            <li>Call out any assumptions you are making</li>
+            <li>Flag risks or misalignment signals</li>
+            <li>Identify anything the team should clarify live during the meeting</li>
+            <li>If clarification is required, ask up to 3 targeted questions before finalizing the prep</li>
+          </ul>
+          <div class="ts-divider">Guardrails</div>
+          <p>Define specific constraints and guardrails unique to this prompt.</p>
+        </div>
+      </div>
+
+      <div class="template-section full-width">
+        <div class="ts-head">
+          <div class="ts-num">7</div>
+          <div class="ts-title">Success Criteria</div>
+        </div>
+        <div class="ts-body">
+          <p>A successful response will:</p>
+          <ul>
+            <li>Save prep time for the team</li>
+            <li>Reduce surprises during the meeting</li>
+            <li>Enable confident, focused client conversation with clear next steps</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-search">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="6" cy="6" r="4.5" stroke="#8FA3B8" stroke-width="1.4"/>
+      <path d="M9.5 9.5L12.5 12.5" stroke="#8FA3B8" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+    <input type="text" id="search-input" placeholder="Search prompt name or description…" />
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Platform</span>
+    <select class="filter-select" id="filter-platform">
+      <option value="">All Platforms</option>
+      <option value="HubSpot">HubSpot</option>
+      <option value="Salesforce">Salesforce / SFMC</option>
+      <option value="GA4">GA4 / Looker Studio</option>
+      <option value="General (Platform-Agnostic)">General (Platform-Agnostic)</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Function</span>
+    <select class="filter-select" id="filter-function">
+      <option value="">All Functions</option>
+      <option value="Campaign Ops">Campaign Ops</option>
+      <option value="Marketing Automation">Marketing Automation</option>
+      <option value="Delivery / Enablement">Delivery / Enablement</option>
+      <option value="Governance / QA">Governance / QA</option>
+      <option value="Analytics / Reporting">Analytics / Reporting</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Audience</span>
+    <select class="filter-select" id="filter-audience">
+      <option value="">All Audiences</option>
+      <option value="CMO">CMO</option>
+      <option value="VP Marketing">VP Marketing</option>
+      <option value="Marketing Ops">Marketing Ops</option>
+      <option value="Cross-functional">Cross-functional</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Client</span>
+    <select class="filter-select" id="filter-client">
+      <option value="">All Clients</option>
+      <option value="General / Reusable">General / Reusable</option>
+    </select>
+  </div>
+  <button class="filter-reset" id="reset-btn">Reset filters</button>
+</div>
+
+<div class="results-bar">
+  <span id="results-label">Showing <strong id="visible-count">1</strong> of <strong id="of-count">1</strong> prompts</span>
+</div>
+
+<!-- PROMPT GRID -->
+<div class="prompt-grid" id="prompt-grid">
+  <!-- Cards injected by JS -->
+</div>
+
+<script>
+const PROMPTS = [
+  {
+    id: "hubspot-workflow-spec",
+    name: "HubSpot Workflow Spec Generator",
+    shortDesc: "Generate a build-ready HubSpot automation workflow specification including triggers, branch logic, suppression rules, QA checklist, and reporting KPIs.",
+    platform: ["HubSpot"],
+    function: ["Campaign Ops", "Marketing Automation"],
+    audience: [],
+    client: "General / Reusable",
+    whenToUse: "Use when designing or building any HubSpot automation workflow for a campaign or lifecycle motion.",
+    inputsRequired: [
+      "Campaign goal",
+      "Audience segment rules",
+      "Conversion action",
+      "Suppression requirements"
+    ],
+    promptText: `Act as a HubSpot Marketing Automation Architect.
+
+Create a build-ready workflow specification with:
+
+1. Objective
+2. Enrollment triggers + criteria
+3. Suppression rules
+4. Branch logic and decision points
+5. Messaging sequence
+6. Required personalization tokens
+7. Data dependencies
+8. QA checklist
+9. Reporting KPIs
+10. Edge cases + failure risks
+
+Assume HubSpot best practices unless told otherwise.`,
+    outputExpectations: "Workflow spec in structured sections, with QA + reporting included.",
+    guardrails: [
+      "No client PII",
+      "Reusable logic only",
+      "Ask questions only if critical"
+    ],
+    tags: [
+      { label: "Marketing Automation", type: "fn" },
+      { label: "HubSpot", type: "plt" },
+      { label: "Lifecycle: Build", type: "" },
+      { label: "Output: Workflow Spec", type: "" }
+    ]
+  },
+  {
+    id: "sql-query-creator",
+    name: "Create a New SQL Query",
+    shortDesc: "Generate a production-ready SFMC SQL or SOQL query for Automation Studio, including join logic, filters, performance notes, and data integrity checks.",
+    platform: ["Salesforce"],
+    function: ["Governance / QA", "Campaign Ops"],
+    audience: [],
+    client: "General / Reusable",
+    whenToUse: "Use when you need to build a new SQL or SOQL query for Salesforce Marketing Cloud Automation Studio — including segmentation, data extension population, or reporting queries.",
+    inputsRequired: [
+      "Client name and industry",
+      "Query type: SQL or SOQL",
+      "Query goal / expected output",
+      "Data Extensions involved",
+      "Relationships between Data Extensions",
+      "Fields required in output",
+      "Filters required"
+    ],
+    promptText: `You are acting as a senior Salesforce consultant at a B2B professional services firm, with deep experience in Sales and Marketing Cloud.
+
+You have a deep knowledge of Automation Studio, especially using SOQL Queries to achieve client data needs, segmenting and creating unique solutions for their Data Extension needs.
+
+OBJECTIVE:
+Prepare concise, production-ready SQL queries and explain the business logic clearly so stakeholders can confidently use the output in reporting, dashboards, or analysis.
+
+CONTEXT & INPUTS:
+Client: [Client Name]
+Industry: [Industry]
+Query Type: SQL or SOQL (specific for Salesforce queries)
+Query Goal: [What is expected from the final Data Extension]
+
+Data Extensions involved: [What Data Extensions will be used]
+Relationships between Data Extensions: [How will these interact]
+Fields required in output: [What fields need to be included]
+Filters required: [Which contacts should be included]
+
+If information is missing or unclear, flag it explicitly rather than making assumptions.
+
+OUTPUT REQUIREMENTS (NON-NEGOTIABLE):
+- SOQL Query (production-ready, properly formatted)
+- Explanation of Logic (brief, business-aligned)
+- Performance Considerations
+- Assumptions & Clarifications Needed
+
+Always include:
+- Clear explanation of joins and filters
+- How aggregation is calculated
+- Any assumptions about schema
+- Edge cases or null handling
+
+Never include:
+- Generic SQL explanations
+- Overly verbose commentary
+- AI disclaimers
+- Assumptions not grounded in the inputs
+
+QUALITY CONTROL — Before finalizing:
+- Call out any assumptions you are making
+- Flag risks (e.g., duplication risk, join inflation, time zone issues)
+- Identify any schema ambiguity
+- If clarification is required, ask up to 3 targeted questions before producing the query
+
+SUCCESS CRITERIA:
+A successful response will produce a clean, executable SOQL query that aligns with the stated business objective, prevents common data integrity mistakes, and is immediately usable in Salesforce.`,
+    outputExpectations: "Production-ready SFMC SQL/SOQL query with logic explanation, performance notes, and assumptions flagged.",
+    guardrails: [
+      "No client PII",
+      "Reusable logic only",
+      "Ask up to 3 clarifying questions if needed",
+      "No assumptions not grounded in inputs"
+    ],
+    tags: [
+      { label: "Governance / QA", type: "fn" },
+      { label: "Salesforce / SFMC", type: "plt" },
+      { label: "Lifecycle: Build", type: "" },
+      { label: "Output: SQL Query", type: "" }
+    ]
+  },
+  {
+    id: "user-story-builder",
+    name: "User Story & Backlog Structure Builder",
+    shortDesc: "Convert discovery notes, SOW language, or stakeholder requests into implementation-ready user stories with acceptance criteria, dependencies, QA considerations, and reporting requirements.",
+    platform: ["General (Platform-Agnostic)"],
+    function: ["Delivery / Enablement"],
+    audience: [],
+    client: "General / Reusable",
+    whenToUse: "Use when translating discovery notes, stakeholder requests, SOW language, or solution ideas into clear, backlog-ready documentation before build begins.",
+    inputsRequired: [
+      "Business objective or problem to solve",
+      "Project, feature, or process in scope",
+      "Primary user/persona impacted",
+      "Current state pain point or gap",
+      "Desired future state / business outcome",
+      "Detailed requirements, notes, or source material",
+      "Platforms, systems, or integrations involved",
+      "Data fields, objects, or logic rules impacted",
+      "Constraints, dependencies, or timeline considerations",
+      "Success metrics / reporting expectations",
+      "Any known risks, exclusions, or assumptions"
+    ],
+    promptText: `Act as a Senior Business Analyst and Solution Architect supporting Pedowitz delivery teams.
+
+I will provide project context, business requirements, stakeholder notes, and any known constraints. Your task is to convert that information into a well-structured, implementation-ready user story package suitable for backlog refinement, solution design, QA planning, and delivery handoff.
+
+REQUIRED OUTPUT SECTIONS:
+1. Feature / Epic Name
+2. Story Title
+3. User Story Statement — As a [user/persona], I want [capability/action], so that [business value/outcome].
+4. Business Context / Objective
+5. In Scope
+6. Out of Scope
+7. Assumptions
+8. Dependencies
+9. Acceptance Criteria using Given / When / Then
+10. Process / Logic Notes
+11. Data / Field / Integration Impacts
+12. Edge Cases / Exceptions
+13. QA / UAT Considerations
+14. Reporting / Success Metrics
+15. Open Questions / Gaps
+16. Recommended Priority (High / Medium / Low)
+
+INSTRUCTIONS:
+- Break complex requirements into multiple user stories when needed rather than forcing unrelated logic into one story.
+- Write stories in clear, implementation-ready language with no vague placeholders unless information is missing.
+- If inputs are incomplete, make reasonable assumptions and label them clearly.
+- Identify any missing information, conflicting requirements, or risks that could affect delivery.
+- Include dependencies on teams, systems, integrations, approvals, or source data where relevant.
+- Acceptance criteria must be specific, testable, and aligned to the stated business outcome.
+- QA considerations must include positive, negative, and exception-path validation where applicable.
+- Reporting expectations must define how success should be measured.
+- If the requirement appears too broad for a single story, recommend a parent epic plus child stories.
+
+OUTPUT FORMAT:
+Return the response in clean markdown with clear section headers. Include a short summary table at the top, bullet points for assumptions and risks, acceptance criteria as a numbered list, and QA and reporting requirements as separate sections.
+
+CONTEXT TO APPLY:
+Use the information provided as the primary source of truth. Do not invent platform-specific logic unless strongly implied by the input. Where there is ambiguity, flag it clearly under Open Questions / Gaps.`,
+    outputExpectations: "Structured user story package with backlog-ready story statement, Given/When/Then acceptance criteria, QA checklist, and open questions flagged.",
+    guardrails: [
+      "No client PII",
+      "Reusable across engagements",
+      "Ask clarifying questions only if critical inputs are missing",
+      "Include assumptions if inputs are incomplete",
+      "Outputs must align with Pedowitz delivery standards"
+    ],
+    tags: [
+      { label: "Delivery / Enablement", type: "fn" },
+      { label: "Platform-Agnostic", type: "plt" },
+      { label: "Lifecycle: Discovery / Backlog", type: "" },
+      { label: "Output: Spec", type: "" }
+    ]
+  },
+  {
+    id: "client-email-rewriter",
+    name: "Client Email Response Rewriter",
+    shortDesc: "Transform rough drafts or rushed replies into polished, client-ready emails with improved tone, structure, and readability — while preserving all commitments and key facts.",
+    platform: ["General (Platform-Agnostic)"],
+    function: ["Delivery / Enablement"],
+    audience: [],
+    client: "General / Reusable",
+    whenToUse: "Use when you need to turn a rough draft or overly technical response into a client-ready email. Especially useful for status updates, delays, scope clarifications, or next-step follow-ups.",
+    inputsRequired: [
+      "Original draft email or rough response",
+      "Client question or situation being addressed",
+      "Desired tone (formal, warm, direct, consultative, diplomatic)",
+      "Key points that must remain unchanged",
+      "Any required dates, deliverables, owners, or next steps",
+      "Any sensitive phrasing to avoid",
+      "Preferred length (brief / standard / detailed)",
+      "Optional context on client relationship or project stage"
+    ],
+    promptText: `Act as a senior client communications advisor supporting a Pedowitz delivery team.
+
+I will provide a draft email, rough notes, or a response that needs improvement. Your task is to rewrite it into a clear, polished, client-ready email that preserves the intended meaning while improving structure, clarity, tone, and professionalism.
+
+REQUIRED OUTPUT SECTIONS:
+1. Suggested Subject Line
+2. Rewritten Email
+3. Key Changes Made
+4. Potential Risks / Wording Flags
+5. Optional Shorter Version (if the original is too long or dense)
+
+INSTRUCTIONS:
+- Preserve the original intent, facts, commitments, and required next steps.
+- Improve clarity, flow, grammar, and readability without changing the meaning.
+- Make the response sound professional, confident, and client-appropriate.
+- Remove unnecessary jargon, repetition, defensiveness, or internal shorthand.
+- If the draft is too blunt, soften it without sounding vague or evasive.
+- If the draft is too vague, make it more specific and action-oriented.
+- Keep accountability clear by identifying owners, dates, decisions, and next steps where provided.
+- If the message includes a delay, issue, risk, or limitation, present it diplomatically with a constructive path forward.
+- Flag any phrasing that could create scope, legal, client management, or expectation risk.
+
+TONE REQUIREMENTS:
+- Default tone: professional, clear, warm, and confident
+- Prioritize client trust, transparency, and actionability
+- Avoid sounding robotic, overly casual, apologetic, or defensive
+- Keep sentences concise and easy to scan
+
+Do not invent project facts, dates, or commitments that were not provided. If important information is missing, note assumptions separately.`,
+    outputExpectations: "Client-ready rewritten email with suggested subject line, key changes summarized, risks or sensitive wording flagged, and optional shorter version when helpful.",
+    guardrails: [
+      "No client PII",
+      "Reusable across engagements",
+      "Do not alter core facts, commitments, or delivery details",
+      "Ask clarifying questions only if critical inputs are missing",
+      "Outputs must align with Pedowitz delivery standards"
+    ],
+    tags: [
+      { label: "Delivery / Enablement", type: "fn" },
+      { label: "Platform-Agnostic", type: "plt" },
+      { label: "Lifecycle: Client Communication", type: "" },
+      { label: "Output: Narrative", type: "" }
+    ]
+  },
+  {
+    id: "sql-query-validator",
+    name: "SQL Query Logic Validator",
+    shortDesc: "Review and validate SQL query logic against business requirements — covering joins, filters, deduplication, null handling, grain validation, and downstream risk before launch.",
+    platform: ["Salesforce", "General (Platform-Agnostic)"],
+    function: ["Governance / QA"],
+    audience: [],
+    client: "General / Reusable",
+    whenToUse: "Use when reviewing a SQL query before launch, troubleshooting incorrect results, or validating whether query logic aligns to the intended business requirement — especially with joins, deduplication, or downstream automations.",
+    inputsRequired: [
+      "SQL query to validate",
+      "Business objective of the query",
+      "Source tables / data extensions involved",
+      "Key fields used for joins",
+      "Expected output grain (per contact, account, submission, etc.)",
+      "Filters, date logic, or segmentation rules",
+      "Output table / destination and intended use",
+      "Known edge cases or records of concern",
+      "Expected row count or validation benchmark, if available",
+      "Platform context (SFMC, HubSpot-connected warehouse, Snowflake, SQL Server, etc.)"
+    ],
+    promptText: `Act as a senior SQL architect and data quality analyst supporting Pedowitz delivery teams.
+
+I will provide a SQL query, the business requirement it is meant to support, and any relevant source/destination table details. Your task is to validate the SQL logic, identify risks or errors, and determine whether the query will produce the intended result set accurately and efficiently.
+
+REQUIRED OUTPUT SECTIONS:
+1. Validation Summary
+2. Business Intent Interpreted
+3. Query Logic Review
+4. Join Review
+5. Filter / Condition Review
+6. Output Grain Validation
+7. Null / Duplicate / Exclusion Risks
+8. Potential Logic Errors or Ambiguities
+9. Recommended Query Fixes
+10. Revised Query (if changes are needed)
+11. QA Test Cases
+12. Expected Validation Checks / Row Count Checks
+13. Open Questions / Assumptions
+14. Risk Level (Low / Medium / High)
+
+INSTRUCTIONS:
+- Review the query against the stated business objective, not just SQL syntax.
+- Validate whether joins, filters, aliases, and conditional logic align to the intended output.
+- Identify risks such as: incorrect join type, duplicate row creation, unintended record exclusion, null handling gaps, invalid assumptions about source data, date filter issues, mismatched grain between joined tables, or logic that could affect downstream automations, reporting, or audience selection.
+- Call out whether the query returns the correct level of detail (one row per contact, company, submission, or transaction).
+- If the query may overcount or undercount records, explain why.
+- Recommend improvements for clarity, maintainability, and performance where relevant.
+- If the query appears logically correct, confirm that clearly and explain why.
+- Provide a corrected version of the query and explain each important change where needed.
+
+QA EXPECTATIONS — Your QA section should include:
+- Row count validation ideas
+- Duplicate detection checks
+- Null-value checks on critical fields
+- Join coverage checks
+- Exception scenarios to test
+- Comparison checks against source or benchmark data
+- Any monitoring or audit recommendations after launch
+
+Assume this review is for a client-facing delivery environment where query accuracy matters for execution, reporting, and QA signoff. Prioritize correctness, transparency, and practical recommendations.`,
+    outputExpectations: "Clear validation of query logic with join/filter/grain analysis, recommended fixes, revised SQL if needed, QA test cases, and risk level assessed.",
+    guardrails: [
+      "No client PII",
+      "Reusable across engagements",
+      "Do not approve query logic without evaluating business intent, joins, filters, and output grain",
+      "Ask clarifying questions only if critical inputs are missing",
+      "Outputs must align with Pedowitz delivery standards"
+    ],
+    tags: [
+      { label: "Governance / QA", type: "fn" },
+      { label: "Salesforce / General", type: "plt" },
+      { label: "Lifecycle: Build / QA / Validation", type: "" },
+      { label: "Output: QA", type: "" }
+    ]
+  },
+  {
+    id: "formula-calculation-builder",
+    name: "Custom Formula & Calculation Builder",
+    shortDesc: "Create, troubleshoot, or translate calculation formulas for Excel, Tableau, or Looker Studio — including KPI logic, conditional formulas, ratio metrics, date logic, and null handling.",
+    platform: ["GA4"],
+    function: ["Analytics / Reporting"],
+    audience: [],
+    client: "General / Reusable",
+    whenToUse: "Use when you need to create, troubleshoot, or translate a calculation formula for reporting or analysis in Excel, Tableau, or Looker Studio. Especially useful for KPI logic, calculated fields, conditional formulas, ratio metrics, or date logic.",
+    inputsRequired: [
+      "Target platform: Excel, Tableau, or Looker Studio",
+      "Business question or reporting objective",
+      "Metric or calculation needed",
+      "Source fields / dimensions / measures involved",
+      "Grain of the calculation (row-level, aggregated, per campaign, per contact, etc.)",
+      "Any filters, date logic, or segmentation rules",
+      "Expected output format (number, percent, text label, category, date, boolean)",
+      "Sample input/output example, if available",
+      "Known edge cases, exclusions, or null-handling rules",
+      "Whether one formula or multiple platform options are needed"
+    ],
+    promptText: `Act as a senior analytics engineer and BI reporting architect supporting Pedowitz delivery teams.
+
+I will provide the reporting objective, target platform, available fields, and the calculation I need. Your task is to create the correct formula or calculated field logic for the requested platform and explain how it works in a way that is practical for implementation and QA.
+
+REQUIRED OUTPUT SECTIONS:
+1. Calculation Summary
+2. Business Intent Interpreted
+3. Recommended Formula
+4. Formula Breakdown / Logic Explanation
+5. Field / Metric Dependencies
+6. Assumptions
+7. Edge Cases / Null Handling
+8. Validation / QA Checks
+9. Alternate Version(s) if helpful
+10. Platform Notes / Limitations
+
+INSTRUCTIONS:
+- Write the formula using the correct syntax for the requested platform: Excel, Tableau, or Looker Studio.
+- Base the formula on the stated business objective, not just the field names.
+- Clearly explain what the formula is doing step by step.
+- If the requested logic could be interpreted in more than one way, state the assumption and provide the most likely correct version.
+- If the formula depends on aggregation level, row-level logic, fixed calculations, or blending constraints, call that out explicitly.
+- Handle blanks, nulls, divide-by-zero risks, and missing values where relevant.
+- If the user requests the same logic across multiple tools, provide separate versions for each platform.
+- If the formula could create inaccurate reporting due to data grain, filter context, or platform limitations, flag that clearly.
+- Do not invent fields, table names, or business rules that were not provided.
+- Where useful, provide both a simple version and a more robust production-ready version.
+
+QA EXPECTATIONS:
+- How to test the formula with sample records
+- Null or blank-value validation
+- Divide-by-zero or error-condition validation
+- Aggregation/grain validation
+- Comparison against a manual benchmark or known example
+- Notes on how filters or date ranges may affect the result
+
+Assume this formula may be used in a client-facing report, dashboard, or analysis deliverable. Prioritize accuracy, maintainability, readability, and practical implementation.`,
+    outputExpectations: "Platform-specific formula with logic explanation, dependencies, edge cases, QA validation checks, and alternate versions when helpful.",
+    guardrails: [
+      "No client PII",
+      "Reusable across engagements",
+      "Do not invent field names, metric definitions, or business logic",
+      "Ask clarifying questions only if critical inputs are missing",
+      "Outputs must align with Pedowitz delivery standards"
+    ],
+    tags: [
+      { label: "Analytics / Reporting", type: "fn" },
+      { label: "GA4 / Looker Studio", type: "plt" },
+      { label: "Lifecycle: Build / Reporting / QA", type: "" },
+      { label: "Output: Spec", type: "" }
+    ]
+  },
+  {
+    id: "task-delegation-tracker",
+    name: "Task Delegation Tracker & Execution Outline Builder",
+    shortDesc: "Turn a task handoff into a clear delegation plan with defined ownership, milestones, a task tracker table, PM oversight guidance, and a definition of done.",
+    platform: ["General (Platform-Agnostic)"],
+    function: ["Delivery / Enablement"],
+    audience: [],
+    client: "General / Reusable",
+    whenToUse: "Use when a senior team member needs to delegate work clearly and wants the handoff to be actionable and easy for a project manager to track — especially when assigning deliverables, defining milestones, or clarifying ownership.",
+    inputsRequired: [
+      "Project or client name",
+      "Task or deliverable being delegated",
+      "Business objective or desired outcome",
+      "Senior owner / delegating lead",
+      "Assigned team member / executor",
+      "Project manager or oversight lead, if applicable",
+      "Scope of work and expected deliverables",
+      "Due date or target completion date",
+      "Key milestones or interim checkpoints",
+      "Dependencies, blockers, or approvals needed",
+      "Relevant background context or requirements",
+      "Success criteria / definition of done",
+      "Risks, exclusions, or items out of scope"
+    ],
+    promptText: `Act as a senior delivery lead and project management coordinator supporting Pedowitz delivery teams.
+
+I will provide the context for a task that needs to be delegated from one team member to another. Your task is to turn that information into a clear delegation outline and a practical task tracker that helps the assigned team member understand what to do and helps the project manager monitor progress, risks, and next steps.
+
+REQUIRED OUTPUT SECTIONS:
+1. Delegation Summary
+2. Task Objective
+3. Business Context / Why This Matters
+4. Primary Owner / Assigned Team Member
+5. Supporting Roles / Oversight
+6. Deliverables Expected
+7. Scope of Work
+8. Out of Scope
+9. Key Requirements / Inputs
+10. Milestones / Target Dates
+11. Dependencies / Approvals Needed
+12. Risks / Watchouts
+13. Recommended Execution Steps
+14. PM Oversight / Check-In Guidance
+15. Task Tracker Table
+16. Open Questions / Assumptions
+17. Definition of Done
+
+TASK TRACKER TABLE — Include a table with these columns:
+- Task / Subtask
+- Owner
+- Status
+- Next Step
+- Target Date
+- Dependency / Risk
+- Notes
+
+PM OVERSIGHT GUIDANCE should include:
+- Recommended review points
+- When to escalate issues
+- What needs confirmation before work starts
+- How to monitor progress against deadlines
+- What to validate before marking the task complete
+
+OUTPUT FORMAT:
+Return the response in markdown with clear section headers. Use a short summary at the top, bullets for risks and dependencies, a table for the task tracker, and a clean handoff structure that can be copied into email, Teams, or a project tracker.
+
+Assume this will be used in a client-service delivery environment where delegation needs to be clear, organized, and accountable. Prioritize execution clarity, ownership, timeline visibility, and practical project management support.`,
+    outputExpectations: "Clear delegation plan with defined ownership, scope, milestones, task tracker table, PM oversight guidance, and definition of done.",
+    guardrails: [
+      "No client PII",
+      "Reusable across engagements",
+      "Do not invent deadlines, owners, or commitments",
+      "Ask clarifying questions only if critical inputs are missing",
+      "Outputs must align with Pedowitz delivery standards"
+    ],
+    tags: [
+      { label: "Delivery / Enablement", type: "fn" },
+      { label: "Platform-Agnostic", type: "plt" },
+      { label: "Lifecycle: Delivery Management", type: "" },
+      { label: "Output: Plan", type: "" }
+    ]
+  }
+];
+
+function buildCard(p) {
+  const allTags = [
+    ...p.platform.map(t => `<span class="tag plt">${t}</span>`),
+    ...p.function.map(t => `<span class="tag fn">${t}</span>`),
+    ...p.audience.map(t => `<span class="tag aud">${t}</span>`),
+    ...p.tags.map(t => `<span class="tag ${t.type}">${t.label}</span>`)
+  ].join('');
+
+  const inputsList = p.inputsRequired.map(i => `<li>${i}</li>`).join('');
+  const guardrailList = p.guardrails.map(g => `<div class="guardrail-item">${g}</div>`).join('');
+
+  const audienceDisplay = p.audience.length ? p.audience.join(', ') : '—';
+  const clientDisplay = p.client || '—';
+
+  return `
+  <div class="prompt-card" data-id="${p.id}" data-platform="${p.platform.join(',')}" data-function="${p.function.join(',')}" data-audience="${p.audience.join(',')}" data-client="${p.client}">
+    <div class="card-header" onclick="toggleCard('${p.id}')">
+      <div class="card-header-left">
+        <div class="card-platform-pill">${p.platform.join(' · ')}</div>
+        <div class="card-title">${p.name}</div>
+        <div class="card-desc">${p.shortDesc}</div>
+      </div>
+      <div class="card-chevron" id="chevron-${p.id}">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+          <path d="M1 1.5L6 6.5L11 1.5" stroke="#5A7490" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+    <div class="card-tags">${allTags}</div>
+    <div class="card-body" id="body-${p.id}">
+
+      <div class="section-block">
+        <div class="section-label">When to Use</div>
+        <div class="section-content">${p.whenToUse}</div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-label">Context & Details</div>
+        <div class="meta-grid">
+          <div class="meta-item">
+            <div class="mi-label">Platform</div>
+            <div class="mi-val">${p.platform.join(', ')}</div>
+          </div>
+          <div class="meta-item">
+            <div class="mi-label">Function</div>
+            <div class="mi-val">${p.function.join(', ')}</div>
+          </div>
+          <div class="meta-item">
+            <div class="mi-label">Audience</div>
+            <div class="mi-val">${audienceDisplay}</div>
+          </div>
+          <div class="meta-item">
+            <div class="mi-label">Client</div>
+            <div class="mi-val">${clientDisplay}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-label">Inputs Required</div>
+        <div class="section-content"><ul>${inputsList}</ul></div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-label">Prompt Text</div>
+        <div class="prompt-box">
+          <button class="copy-btn" onclick="copyPrompt(event, '${p.id}')">Copy</button>
+          <pre id="prompt-text-${p.id}">${escapeHtml(p.promptText)}</pre>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-label">Output Expectations</div>
+        <div class="section-content">${p.outputExpectations}</div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-label">Guardrails</div>
+        <div class="guardrail-list">${guardrailList}</div>
+      </div>
+
+    </div>
+  </div>`;
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toggleCard(id) {
+  const card = document.querySelector(`[data-id="${id}"]`);
+  card.classList.toggle('open');
+}
+
+function copyPrompt(e, id) {
+  e.stopPropagation();
+  const text = document.getElementById(`prompt-text-${id}`).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = e.target;
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function renderCards(filtered) {
+  const grid = document.getElementById('prompt-grid');
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="no-results">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="18" cy="18" r="12" stroke="#8FA3B8" stroke-width="2"/>
+        <path d="M27 27L36 36" stroke="#8FA3B8" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <p>No prompts match your filters. Try adjusting your search.</p>
+    </div>`;
+  } else {
+    grid.innerHTML = filtered.map(buildCard).join('');
+  }
+  document.getElementById('visible-count').textContent = filtered.length;
+  document.getElementById('of-count').textContent = PROMPTS.length;
+}
+
+function applyFilters() {
+  const search = document.getElementById('search-input').value.toLowerCase();
+  const platform = document.getElementById('filter-platform').value;
+  const fn = document.getElementById('filter-function').value;
+  const aud = document.getElementById('filter-audience').value;
+  const client = document.getElementById('filter-client').value;
+
+  const filtered = PROMPTS.filter(p => {
+    const matchSearch = !search ||
+      p.name.toLowerCase().includes(search) ||
+      p.shortDesc.toLowerCase().includes(search);
+    const matchPlatform = !platform || p.platform.includes(platform);
+    const matchFn = !fn || p.function.includes(fn);
+    const matchAud = !aud || p.audience.includes(aud);
+    const matchClient = !client || p.client === client;
+    return matchSearch && matchPlatform && matchFn && matchAud && matchClient;
+  });
+
+  renderCards(filtered);
+}
+
+document.getElementById('search-input').addEventListener('input', applyFilters);
+document.getElementById('filter-platform').addEventListener('change', applyFilters);
+document.getElementById('filter-function').addEventListener('change', applyFilters);
+document.getElementById('filter-audience').addEventListener('change', applyFilters);
+document.getElementById('filter-client').addEventListener('change', applyFilters);
+document.getElementById('reset-btn').addEventListener('click', () => {
+  document.getElementById('search-input').value = '';
+  document.getElementById('filter-platform').value = '';
+  document.getElementById('filter-function').value = '';
+  document.getElementById('filter-audience').value = '';
+  document.getElementById('filter-client').value = '';
+  applyFilters();
+});
+
+document.getElementById('total-count').textContent = PROMPTS.length;
+renderCards(PROMPTS);
+
+function toggleTemplate() {
+  const panel = document.getElementById('template-panel');
+  const btn = document.getElementById('template-toggle-btn');
+  const isOpen = panel.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+  if (isOpen) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+const FULL_TEMPLATE_TEXT = `PROMPT TEMPLATE FORMAT (Copy ONLY)
+
+Prompt Name
+(Short, specific title — action-oriented)
+Example: HubSpot Workflow Spec Generator
+
+1. ROLE & POINT OF VIEW
+You are acting as a senior client engagement lead at a B2B professional services firm, with deep experience in revenue marketing, marketing operations, and executive-level client interactions.
+You understand complex stakeholder dynamics and how to prepare efficiently for high-impact client meetings.
+
+2. OBJECTIVE (JOB TO BE DONE)
+Your objective is to prepare concise, actionable meeting prep points so that the team can run an efficient, informed client meeting and drive clear next steps.
+
+3. CONTEXT & INPUTS
+Context:
+Client: [Client Name]
+Industry: [Industry]
+Meeting Type: [Status / Planning / QBR / Discovery / Escalation]
+Audience: [CMO, VP Marketing, Marketing Ops, Cross-functional]
+Platform: [Marketo, HubSpot, SFDC]
+Function: [Campaign Ops, Workflow]
+Date of Upcoming Meeting: [Date]
+
+Inputs:
+- Previous meeting notes (included below)
+- Email and chat communications since the last meeting (included below)
+- Project plan and SOW (if relevant)
+- Campaign goal
+- Audience segment rules
+- Conversion action
+- Suppression requirements
+
+If information is missing or unclear, flag it explicitly rather than making assumptions.
+
+4. OUTPUT REQUIREMENTS (NON-NEGOTIABLE)
+The output must be:
+- Clear, concise, and client-ready
+- Written in TPG voice (confident, pragmatic, outcome-oriented)
+- Structured for quick consumption before the meeting
+
+Format — provide output in the following sections:
+- Meeting Objective (1-2 bullets)
+- Key Updates Since Last Meeting
+- Open Items / Risks / Blockers
+- Decisions Needed in This Meeting
+- Recommended Talking Points
+- Proposed Next Steps (with owners if possible)
+
+Length: No more than 1 page or 10-12 total bullets.
+
+5. INCLUSIONS & EXCLUSIONS
+Always include:
+- What changed since the last meeting
+- Where the client may push back or ask questions
+- Clear decision points
+
+Never include:
+- Generic meeting advice
+- AI disclaimers
+- Repetition of raw notes
+- Assumptions not grounded in the provided inputs
+
+6. QUALITY CONTROL
+Before finalizing:
+- Call out any assumptions you are making
+- Flag risks or misalignment signals
+- Identify anything the team should clarify live during the meeting
+- If clarification is required, ask up to 3 targeted questions before finalizing the prep
+Guardrails: [Define specific constraints here]
+
+7. SUCCESS CRITERIA
+A successful response will:
+- Save prep time for the team
+- Reduce surprises during the meeting
+- Enable confident, focused client conversation with clear next steps`;
+
+function copyFullTemplate() {
+  navigator.clipboard.writeText(FULL_TEMPLATE_TEXT).then(() => {
+    const btn = document.getElementById('copy-template-btn');
+    const orig = btn.innerHTML;
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+</script>
+</body>
+</html>
